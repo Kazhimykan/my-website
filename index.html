@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>График смен — 5 сотрудников</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="container"><nav class="page-nav"><a class="active" href="index.html">📅 График смен</a><a href="archive.html">🗂 Архив за год</a></nav>
+    <header class="header"><div><span class="eyebrow">УЧЁТ РАБОЧЕГО ВРЕМЕНИ</span><h1>График смен</h1><p>Пять сотрудников · отметки вручную · зарплата, бонусы и удержания</p></div><button id="exportBtn" class="outline">↓ Сохранить файл</button></header>
+    <section class="panel controls"><div class="control"><label for="month">Месяц</label><input id="month" type="month" /></div><div class="control"><label for="rate">Оплата полной смены, ₸</label><input id="rate" type="number" min="0" step="100" value="22000" /></div><div class="control"><label for="bonus">Бонус за полную смену, ₸</label><input id="bonus" type="number" min="0" step="50" value="3200" /></div><div class="control"><label>Данные</label><label class="file-button" for="importFile">↑ Открыть файл</label><input id="importFile" type="file" accept="application/json,.json" hidden /></div></section>
+    <section class="stats"><article><span>Отработано всеми</span><strong id="totalShifts">0</strong><small>эквивалент полных смен</small></article><article><span>Основная оплата</span><strong id="totalBase">0 ₸</strong></article><article><span>Бонусы</span><strong id="totalBonus">0 ₸</strong></article><article><span>Все удержания</span><strong id="totalDeductions">0 ₸</strong></article><article class="accent"><span>К выплате</span><strong id="totalPay">0 ₸</strong></article></section>
+    <section class="panel"><div class="section-title"><div><h2>Табель сотрудников</h2><p>Выберите отметку и нажмите на нужную клетку. Повторное нажатие снимает отметку.</p></div><div class="legend"><button data-mark="1" class="mark-choice selected">1 — смена</button><button data-mark="0.5" class="mark-choice">0,5 — полдня</button><button data-mark="В" class="mark-choice">В — выходной</button><span class="replacement-legend">П — подмена (автоматически)</span><button data-mark="" class="mark-choice">✕ Очистить</button></div></div><div class="table-scroll"><table id="scheduleTable"><thead></thead><tbody></tbody></table></div><p class="hint">Прокручивайте таблицу влево и вправо на телефоне. Пустая клетка — день ещё не отмечен.</p></section>
+    <section class="panel"><div class="section-title"><div><h2>Зарплата каждого сотрудника</h2><p>Половина смены = половина оклада за смену и половина бонуса. Удержания за ревизию и день рождения вводятся отдельно для каждого сотрудника и месяца.</p></div></div><div class="table-scroll"><table class="summary-table"><thead><tr><th>Сотрудник</th><th>Полные</th><th>Половины</th><th>Выходные</th><th>Итого смен</th><th>За смены</th><th>Бонус</th><th>Начислено</th><th>Ревизия, ₸</th><th>День рождения, ₸</th><th>Все удержания</th><th>К выплате</th></tr></thead><tbody id="summaryBody"></tbody></table></div></section>
+    <section class="panel" id="replacementSection">
+      <div class="section-title"><div><h2>🔄 Подмены и долги</h2><p>Записывайте, кто вышел вместо кого. Долги учитываются отдельно от зарплаты по графику, чтобы не было двойных вычетов.</p></div></div>
+      <form id="replacementForm" class="replacement-form">
+        <div class="control"><label for="replaceDate">Дата</label><input id="replaceDate" type="date" required></div>
+        <div class="control"><label for="replaceFor">Вместо кого (должник)</label><select id="replaceFor" required></select></div>
+        <div class="control"><label for="replaceBy">Кто выходит (кому должны)</label><select id="replaceBy" required></select></div>
+        <div class="control"><label for="replaceFraction">Смена</label><select id="replaceFraction"><option value="1">1 — полная</option><option value="0.5">0,5 — половина</option></select></div>
+        <div class="control"><label for="replaceAmount">Сумма долга, ₸</label><input id="replaceAmount" type="number" min="0" step="1" required></div>
+        <div class="control"><label for="replaceNote">Комментарий</label><input id="replaceNote" type="text" maxlength="200" placeholder="Например: подмена в четверг"></div>
+        <button type="submit">+ Добавить подмену</button>
+      </form>
+      <p class="hint">Здесь отмечается долг за подмену, а сам табель меняется вручную. Для примера: 15.10.2026 Ернур вышел вместо сотрудника 1, долг 25 200 ₸. Запись примера можно удалить.</p>
+      <div class="stats replacement-stats"><article><span>Всего долгов за месяц</span><strong id="replacementTotal">0 ₸</strong></article><article><span>Уже оплачено</span><strong id="replacementPaid">0 ₸</strong></article><article class="accent"><span>Осталось отдать</span><strong id="replacementDue">0 ₸</strong></article></div>
+      <div class="table-scroll"><table class="summary-table"><thead><tr><th>Дата</th><th>Вместо кого</th><th>Вышел</th><th>Смена</th><th>Долг</th><th>Оплачено</th><th>Остаток</th><th>Комментарий</th><th>Действия</th></tr></thead><tbody id="replacementBody"></tbody></table></div>
+    </section>
+    <div class="bottom-bar"><span id="saveStatus">Изменения сохраняются автоматически на этом устройстве.</span><button id="clearMonth" class="danger">Очистить отметки месяца</button></div>
+  </main>
+</body>
+</html>
